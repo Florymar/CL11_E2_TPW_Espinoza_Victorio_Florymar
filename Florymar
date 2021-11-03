@@ -1,0 +1,86 @@
+<?php
+ob_start();
+?>
+<!DOCTYPE html>
+<html>
+<head>
+     <link rel="stylesheet" href="https:maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+	 <script src="https://ajax.gloogleapis.com/ajax/libd/jquery/3.5.1/jquery.min.js"></script>
+     <link type="text/css" href="css/jquery.dataTables_themeroller.css" rel="stylesheet"/>
+	 <script type="text/javascript" src="js/jquery.js"></script>
+     <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script> 
+</head>
+<body>
+<?php  
+$servidor="localhost";
+$usuario="root";
+$clave="";
+$bdd="tecnologico";
+$conexion=mysqli_connect($servidor,$usuario,$clave,$bdd);
+$tabla="SELECT * FROM cursos WHERE codcur like 'MA%' ";
+$conectar=mysqli_query($conexion,$tabla);
+$cursos=array();
+while($filas=mysqli_fetch_assoc($conectar))
+{
+	$cursos[]=$filas;
+}
+	
+?>
+<div class="container">
+	 <table id="filename" class="table table-striped table-bordered"  border="1">
+		 <tr>
+		     <td colspan="4"><h1><center>MECANICA DE AUTOMOTRIZ</center></h1></td>
+         </tr>
+		 <tr>
+			<th><center>CODIGO</center></th>
+			<th><center>NOMBRE</center></th>
+			<th><center>CREDITOS</center></th>
+			<th><center>HORAS</center></th>
+		 </tr>
+             <tbody>
+			<?php  
+				foreach($cursos as $curso)
+				{
+			?>
+				<tr>
+					<td style="text-align:center;"><?php echo $curso["codcur"]; ?></td>
+					<td style="text-align:center;"><?php echo $curso["nombre"];?></td>
+					<td style="text-align:center;"><?php echo $curso["cred"];?></td>
+					<td style="text-align:center;"><?php echo $curso["horas"];?></td>
+				</tr>
+			<?php		
+				}
+			?>
+			</tbody>
+	</table>
+</div>
+<?php  
+	if(isset($_POST["exportar"])) 
+	{
+		 if(!empty($cursos)) 
+		 {
+		 	$filename ="cursos.xls";
+		 	header("Content-Type: application/vnd.ms-excel; name='excel'");
+		 	header("Content-Disposition: attachment; filename=".$filename);
+		 }
+		 else
+		 {
+		 	echo 'No hay datos a exportar';
+		 }
+		 exit;
+    }
+?>
+<div clas="btn-group pull-right">
+	     <form action=" <?php echo $_SERVER["PHP_SELF"]; ?>" method="post">
+		 <center><button type="submit" id="exportar" name='exportar'value="Export to excel" class="btn btn-success btn-lg">Exportar a Excel</button></center>
+	     </form>
+		 <p></p>
+</div><p></p>
+</body>
+</html>
+<?php
+ob_end_flush();
+?>
